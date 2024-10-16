@@ -1,0 +1,1 @@
+LockDuration:2|TimeOutInterval:3|FailedAttempts:5
