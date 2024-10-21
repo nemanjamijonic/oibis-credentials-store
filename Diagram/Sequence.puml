@@ -1,0 +1,58 @@
+@startuml OIBIS
+
+    
+participant "Account User/Admin" as Client
+participant "Authentication Service" as AS
+participant "Credentials Store" as CS
+participant "Database" as DB
+
+' Authentication Process
+Client -> AS : Login request with credentials
+activate AS
+AS -> CS : Validate credentials
+activate CS
+CS -> DB : Retrieve user data
+activate DB
+DB --> CS : User data
+deactivate DB
+CS --> AS : Credentials validation result
+deactivate CS
+AS --> Client : Authentication response
+deactivate AS
+
+' Account Management by Admin
+Client -> CS : Account management request (Create/Delete/Lock/Enable/Disable)
+activate CS
+CS -> DB : Update account information
+activate DB
+DB --> CS : Update confirmation
+deactivate DB
+CS --> Client : Account management response
+deactivate CS
+
+' Automated Account Policies
+CS -> DB : Check account policies
+activate DB
+alt Account locked
+    DB -> CS : Account lock status
+    CS -> Client : Account locked message
+else Account active
+    DB -> CS : Account active status
+    CS -> Client : Account active message
+end
+deactivate DB
+
+' Encryption and Digital Signature
+AS -> CS : Establish secure connection (Certificate-based)
+activate CS
+CS -> AS : Secure connection established
+deactivate CS
+AS -> CS : Encrypt and sign messages (AES in CBC mode)
+CS -> AS : Verify and decrypt messages
+
+' Note
+note over Client, CS : Communication via Windows Authentication Protocol
+note over AS, CS : Messages are AES encrypted and digitally signed
+
+
+@enduml
